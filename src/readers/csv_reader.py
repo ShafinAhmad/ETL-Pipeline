@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 
-def read_csv(fileName: str) -> pd.DataFrame:
+def read_csv(fileName: Path) -> pd.DataFrame:
     pass
