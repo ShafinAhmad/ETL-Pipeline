@@ -14,6 +14,7 @@ def display(input: pd.DataFrame) -> None:
 def main():
     dataDirectory: Path = root_dir / "data" / "imdb.csv"
     data: pd.DataFrame = read_csv(dataDirectory.resolve())
+    print(data)
     cleanedData = clean(data)
     validatedData = validate(cleanedData)
     finalData = transform(validatedData)

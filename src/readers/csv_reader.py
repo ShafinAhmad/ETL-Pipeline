@@ -2,4 +2,5 @@ import pandas as pd
 from pathlib import Path
 
 def read_csv(fileName: Path) -> pd.DataFrame:
-    pass
+    data: pd.DataFrame = pd.read_csv(fileName)
+    return data
