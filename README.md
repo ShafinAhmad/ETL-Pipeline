@@ -1,4 +1,4 @@
-# Basic ETL Pipeline Project
+# ETL Pipeline Project
 
 A Python-based ETL (Extract, Transform, Load) pipeline for processing IMDb movie dataset. This project demonstrates data cleaning, validation, and transformation workflows using pandas.
 
@@ -49,4 +49,5 @@ The pipeline will:
 
 - Python 3.8+
 - pandas
+
 - pathlib (standard library)
