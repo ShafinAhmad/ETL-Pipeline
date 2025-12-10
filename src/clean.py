@@ -23,8 +23,10 @@ def clean(input: pd.DataFrame) -> pd.DataFrame:
     df["No_of_Votes"] = df["No_of_Votes"].astype(int)
     df["Gross"] = df["Gross"].apply(clean_gross).astype(int)
     
-    string_columns = ["Series_Title", "Genre", "Director", "Star1", "Star2", "Star3", "Star4"]
+    string_columns = ["Series_Title", "Director", "Star1", "Star2", "Star3", "Star4"]
     for col in string_columns:
         df[col] = df[col].astype(str).str.strip()
+    
+    df["Genre"] = df["Genre"].str.split(", ")
     
     return df
