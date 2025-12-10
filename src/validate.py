@@ -5,13 +5,14 @@ def validate(input: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     # Reject if anything but Poster_link, Certificate, Number_of_Movies is empty
     # Reject if movie name is duplicated
     df = input.copy()
-    optional_columns = {"Poster_Link", "Certificate", "Number_of_Movies", "Gross"}
-    required_columns = [a for a in df.columns if a not in optional_columns]
+    optional_columns: set[str] = {"Poster_Link", "Certificate", "Number_of_Movies"}
+    required_columns: list[str] = [a for a in df.columns if a not in optional_columns]
 
-    missing_required = df[required_columns].isna().any(axis=1)
-    duplicated_titles = df.duplicated(subset=["Series_Title"], keep=False)
-    invalid_masks = missing_required | duplicated_titles
+    missing_required: pd.Series = df[required_columns].isna().any(axis=1)
+    duplicated_titles: pd.Series = df.duplicated(subset=["Series_Title"], keep=False)
+    invalid_masks: pd.Series = missing_required | duplicated_titles
     
-    rejected_data = df[invalid_masks]
-    valid_data = df[~invalid_masks]
+    rejected_data: pd.DataFrame = df[invalid_masks]
+    valid_data: pd.DataFrame = df[~invalid_masks]
+    
     return valid_data, rejected_data
