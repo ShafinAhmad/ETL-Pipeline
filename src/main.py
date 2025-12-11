@@ -27,7 +27,7 @@ def main():
     print("Transformed Data")
     # print(finalData)
     print(finalData[["Series_Title", "Gross", "Gross_Inflation_Adjusted"]])
-    load(finalData, rejectedData)
+    load(finalData, rejectedData, password="test")
     display(finalData)
 
 if __name__=="__main__":
