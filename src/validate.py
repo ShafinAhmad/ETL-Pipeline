@@ -1,4 +1,5 @@
 import pandas as pd
+from logger import logger
 
 def validate(input: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     # [Poster_Link, Series_Title, Released_Year, Certificate, Runtime, Genre, IMDB_Rating, Meta_Score, Director, Star1, Star2, Star3, Star4, No_of_Voters, Gross, Number_of_Movies]
@@ -46,5 +47,6 @@ def validate(input: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     rejected_data["reason"] = combined_reasons[invalid_masks].values
 
     valid_data: pd.DataFrame = df[~invalid_masks].copy()
-
+    
+    logger.info(f"validate.completed valid={len(valid_data)} rejected={len(rejected_data)}")
     return valid_data, rejected_data

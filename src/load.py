@@ -1,6 +1,7 @@
 import pandas as pd
 import psycopg2
 from psycopg2 import OperationalError
+from logger import logger
 
 
 def load(
@@ -104,7 +105,7 @@ def load(
 
             insert_query = f"INSERT INTO movies ({cols_str}) VALUES ({placeholders}) ON CONFLICT (Series_Title) DO UPDATE SET {set_clause}"
             cursor.executemany(insert_query, data_tuples)
-            print(f"Inserted or updated {len(data_tuples)} valid records in 'movies' table")
+            logger.info(f"Inserted or updated {len(data_tuples)} valid records in 'movies' table")
         
         # Insert rejected records
         if not rejected.empty:
@@ -113,13 +114,13 @@ def load(
                 row.to_json()
             ) for _, row in rejected.iterrows()]
             cursor.executemany("INSERT INTO rejected (reason, raw_data) VALUES (%s, %s)", rejected_tuples)
-            print(f"Inserted {len(rejected_tuples)} rejected records into 'rejected' table")
+            logger.info(f"Inserted {len(rejected_tuples)} rejected records into 'rejected' table")
         
         conn.commit()
-        print("Data successfully loaded to PostgreSQL")
+        logger.info(f"load.completed inserted={len(input)} rejected={len(rejected)}")
         
     except psycopg2.Error as e:
-        print(f"Database error: {e}")
+        logger.info(f"Database error: {e}")
         if conn:
             conn.rollback()
         raise

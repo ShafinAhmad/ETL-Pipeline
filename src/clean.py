@@ -1,4 +1,5 @@
 import pandas as pd
+from logger import logger
 
 def clean_runtime(runtime: str) -> int:
     return int(runtime.replace("min", "").strip())
@@ -29,4 +30,5 @@ def clean(input: pd.DataFrame) -> pd.DataFrame:
     
     df["Genre"] = df["Genre"].str.split(", ")
     
+    logger.info(f"clean.completed rows={len(df)}")
     return df

@@ -17,16 +17,9 @@ def display(input: pd.DataFrame) -> None:
 def main():
     dataDirectory: Path = root_dir / "data" / "imdb.csv"
     data: pd.DataFrame = read_csv(dataDirectory.resolve())
-    # print(data)
     validatedData, rejectedData = validate(data)
-    print("Validated Data")
     cleanedData = clean(validatedData)
-    print("Cleaned Data")
-    # print(cleanedData)
     finalData = transform(cleanedData)
-    print("Transformed Data")
-    # print(finalData)
-    print(finalData[["Series_Title", "Gross", "Gross_Inflation_Adjusted"]])
     load(finalData, rejectedData, password="test")
     display(finalData)
 
