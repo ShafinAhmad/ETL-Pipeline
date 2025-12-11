@@ -98,3 +98,51 @@ def visualize(df: pd.DataFrame) -> None:
     print(f"Plots saved to {output_path}")
     plt.close()
 
+
+def genre_intersection_union(df: pd.DataFrame) -> None:
+    # Get all unique genres
+    all_genres = set()
+    for genres_list in df['Genre']:
+        all_genres.update(genres_list)
+    
+    all_genres = sorted(list(all_genres))
+    
+    # For each pair of genres, compute union and intersection counts
+    union_counts = []
+    intersection_counts = []
+    labels = []
+    
+    for i, genre1 in enumerate(all_genres):
+        for genre2 in all_genres[i+1:]:
+            # Count movies with genre1 AND genre2 (intersection)
+            intersection = sum(df['Genre'].apply(lambda g: genre1 in g and genre2 in g))
+            
+            if intersection > 0:
+                union = sum(df['Genre'].apply(lambda g: genre1 in g or genre2 in g))
+                
+                if union >= 280:
+                    union_counts.append(union)
+                    intersection_counts.append(intersection)
+                    labels.append(f"{genre1}-{genre2}")
+    
+    fig, ax = plt.subplots(figsize=(12, 8))
+    ax.scatter(union_counts, intersection_counts, alpha=0.6, s=50)
+    
+    for i, label in enumerate(labels):
+        ax.annotate(label, (union_counts[i], intersection_counts[i]), 
+                   fontsize=8, alpha=0.7, xytext=(5, 5), textcoords='offset points')
+    
+    ax.set_xlabel('Movies in Either Genre (Union)')
+    ax.set_ylabel('Movies in Both Genres (Intersection)')
+    ax.set_title('Genre Intersection vs Union (Intersection > 0)')
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    
+    plots_dir = root_dir / "plots"
+    plots_dir.mkdir(exist_ok=True)
+    output_path = plots_dir / "genre_intersection.png"
+    
+    plt.savefig(output_path, dpi=100, bbox_inches='tight')
+    print(f"Genre intersection plot saved to {output_path}")
+    plt.close()

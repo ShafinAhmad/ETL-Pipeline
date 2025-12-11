@@ -3,7 +3,7 @@ from load import load
 from clean import clean
 from validate import validate
 from transform import transform
-from visualize import visualize
+from visualize import visualize, genre_intersection_union
 from pathlib import Path
 import pandas as pd
 
@@ -20,6 +20,7 @@ def main():
     finalData = transform(cleanedData)
     load(finalData, rejectedData, password="test")
     visualize(finalData)
+    genre_intersection_union(finalData)
 
 if __name__=="__main__":
     main()
