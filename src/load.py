@@ -85,7 +85,7 @@ def load(
         """)
         
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS rejected_records (
+            CREATE TABLE IF NOT EXISTS rejected (
                 id SERIAL PRIMARY KEY,
                 reason VARCHAR(500),
                 raw_data JSONB
@@ -112,8 +112,8 @@ def load(
                 row.get("reason") if isinstance(row, dict) else row.get("reason", None),
                 row.to_json()
             ) for _, row in rejected.iterrows()]
-            cursor.executemany("INSERT INTO rejected_records (reason, raw_data) VALUES (%s, %s)", rejected_tuples)
-            print(f"Inserted {len(rejected_tuples)} rejected records into 'rejected_records' table")
+            cursor.executemany("INSERT INTO rejected (reason, raw_data) VALUES (%s, %s)", rejected_tuples)
+            print(f"Inserted {len(rejected_tuples)} rejected records into 'rejected' table")
         
         conn.commit()
         print("Data successfully loaded to PostgreSQL")
