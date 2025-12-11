@@ -40,14 +40,6 @@ The pipeline will:
 5.  Load the results to output destination
 6.  Display summary information
 
-## Requirements
-
--   Python 3.8+
--   numpy
--   pandas
--   cpi
--   pathlib (standard library)
-
 ## Usage
 
 1.  Create a virtual environment in the project root:
