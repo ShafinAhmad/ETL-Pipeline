@@ -5,8 +5,20 @@ import cpi
 def transform(input: pd.DataFrame) -> pd.DataFrame:
     df: pd.DataFrame = input.copy()
     
-    # Add Genre Count column
-    df['Genre_Count'] = df['Genre'].str.count(',') + 1
+    # Add Genre Count column (handle list-type Genre from cleaning)
+    def _genre_count(g):
+        if g is None:
+            return 0
+        if isinstance(g, float) and pd.isna(g):
+            return 0
+        if isinstance(g, (list, tuple)):
+            return len(g)
+        try:
+            return int(str(g).count(',') + 1)
+        except Exception:
+            return 0
+
+    df['Genre_Count'] = df['Genre'].apply(_genre_count)
     
     print("Genre Count Added")
     
@@ -47,7 +59,7 @@ def transform(input: pd.DataFrame) -> pd.DataFrame:
     print("Inflation factors dictionary created")
     inflation_factors = df["Released_Year"].map(dict_years)
     print("Inflation Factors Computed")
-    df["Gross_Inflation_Adjusted"] = (df["Gross"] * inflation_factors).astype(int)
+    df["Gross_Inflation_Adjusted"] = ((df["Gross"] * inflation_factors // 1)).astype(int)
     
     print("Gross Adjusted for Inflation")
     return df
