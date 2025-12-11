@@ -38,7 +38,9 @@ The pipeline will:
 3.  Clean and standardize the validated data
 4.  Transform the data into final format
 5.  Load the results to output destination
-6.  Display summary information
+6.  Display graphs
+
+![4 Graphs displaying Decade vs AGI, Length vs AGI, Rating vs AGI, Popularity vs AGI](./plots/analysis.png)
 
 ## Usage
 
