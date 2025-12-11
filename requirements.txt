@@ -3,3 +3,4 @@ numpy
 pytest
 cpi
 psycopg2-binary
+matplotlib
