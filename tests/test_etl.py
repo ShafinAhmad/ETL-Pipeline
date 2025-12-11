@@ -8,10 +8,12 @@ import types
 import importlib
 import pandas as pd
 import pytest
+from unittest.mock import Mock, patch, MagicMock
 
 from clean import clean_runtime, clean_gross, clean as clean_df
 from validate import validate
 from readers.csv_reader import read_csv
+from load import load
 
 
 def test_clean_runtime_and_gross():
@@ -182,3 +184,66 @@ def test_transform_categories_and_scores():
     factor_s2 = cpi.inflate(1, int(df.loc[1, "Released_Year"]))
     expected_s2 = int(df.loc[1, "Gross"] * factor_s2)
     assert out.loc[out.Series_Title == "S2", "Gross_Inflation_Adjusted"].iloc[0] == expected_s2
+
+
+def test_load_success(monkeypatch):
+    """Test that load() creates tables and inserts records via PostgreSQL."""
+    # Mock psycopg2.connect and cursor operations
+    mock_cursor = MagicMock()
+    mock_conn = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    
+    def mock_connect(*args, **kwargs):
+        return mock_conn
+    
+    monkeypatch.setattr("load.psycopg2.connect", mock_connect)
+    
+    valid_df = pd.DataFrame([
+        {"Series_Title": "Movie1", "Released_Year": 2000, "Runtime": 120, "IMDB_Rating": 8.0, "Gross": 1000},
+    ])
+    rejected_df = pd.DataFrame([
+        {"Series_Title": "Bad", "Released_Year": None, "Runtime": 90},
+    ])
+    
+    load(valid_df, rejected_df)
+    
+    # Verify connection was made with default params
+    assert mock_cursor.execute.called
+    # Verify commit was called
+    assert mock_conn.commit.called
+    # Verify close was called
+    assert mock_conn.close.called
+
+
+def test_load_empty_dataframes(monkeypatch):
+    """Test that load() handles empty DataFrames gracefully."""
+    mock_cursor = MagicMock()
+    mock_conn = MagicMock()
+    mock_conn.cursor.return_value = mock_cursor
+    
+    def mock_connect(*args, **kwargs):
+        return mock_conn
+    
+    monkeypatch.setattr("load.psycopg2.connect", mock_connect)
+    
+    # Call with empty DataFrames
+    load(pd.DataFrame(), pd.DataFrame())
+    
+    # Should still execute table creation
+    assert mock_cursor.execute.called
+    assert mock_conn.commit.called
+
+
+def test_load_connection_error(monkeypatch):
+    """Test that load() handles connection errors gracefully."""
+    def mock_connect(*args, **kwargs):
+        raise Exception("Connection failed")
+    
+    monkeypatch.setattr("load.psycopg2.connect", mock_connect)
+    
+    valid_df = pd.DataFrame([
+        {"Series_Title": "Movie1", "Released_Year": 2000, "Runtime": 120},
+    ])
+    
+    with pytest.raises(Exception, match="Connection failed"):
+        load(valid_df, pd.DataFrame())
