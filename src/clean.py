@@ -1,4 +1,4 @@
-import pandas as pd
+# import pandas as pd
 from logger import logger
 from pyspark.sql import DataFrame as SparkDataFrame
 from pyspark.sql.functions import regexp_replace
@@ -12,7 +12,7 @@ def clean(input: SparkDataFrame) -> SparkDataFrame:
     # Turn all nulls in box office to 0
     
     df = input.drop(*["Poster_Link", "Certificate", "Overview", "Number_of_Movies"])
-    df.toPandas().to_csv("cleaned_input.csv")
+    # df.toPandas().to_csv("cleaned_input.csv")
     df = df.withColumn("Released_Year", df["Released_Year"].cast("int"))
     df = df.withColumn("Runtime", (regexp_replace(df["Runtime"], "min", "")).cast("int"))
     df = df.withColumn("IMDB_Rating", df["IMDB_Rating"].cast("float"))
